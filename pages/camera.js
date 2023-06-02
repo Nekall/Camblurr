@@ -1,5 +1,5 @@
 import { Camera, CameraType, FlashMode } from "expo-camera";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Button,
   StyleSheet,
@@ -17,7 +17,7 @@ const CameraScreen = ({ setIsHomePage }) => {
   const { width } = useWindowDimensions();
   const height = Math.round((width * 16) / 9);
   const [flash, setFlash] = useState(FlashMode.off);
-
+  const cameraRef = useRef(null);
 
   // Tracking face
   const [xPosition, setXPosition] = useState("50%");
@@ -25,6 +25,13 @@ const CameraScreen = ({ setIsHomePage }) => {
   const [heightFace, setHeightFace] = useState(100);
   const [widthFace, setWidthFace] = useState(100);
   const [faceDetected, setFaceDetected] = useState(false);
+
+  // Take picture & save
+  const [photoUri, setPhotoUri] = useState("");
+
+
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  
 
   if (!permission) {
     // Camera permissions are still loading
@@ -57,7 +64,7 @@ const CameraScreen = ({ setIsHomePage }) => {
 
   const handleFacesDetected = ({ faces }) => {
     if (faces.length > 0) {
-      console.log("faces", faces);
+      //console.log("faces", faces);
 
       /// First face
       const face = faces[0];
@@ -74,12 +81,25 @@ const CameraScreen = ({ setIsHomePage }) => {
     }
   };
 
+  const takePicture = () => {
+    if (cameraRef.current) {
+      cameraRef.current.takePictureAsync({ onPictureSaved: onPictureSaved });
+    }
+  };
+
+  const onPictureSaved = async (photo) => {
+    setPhotoUri(photo.uri);
+    await sleep(6000);
+    setPhotoUri("");
+  };
+
   return (
     <View style={styles.container}>
       <Camera
         type={type}
         flashMode={flash}
         onFacesDetected={handleFacesDetected}
+        ref={cameraRef}
         faceDetectorSettings={{
           mode: FaceDetector.FaceDetectorMode.fast,
           detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
@@ -98,15 +118,15 @@ const CameraScreen = ({ setIsHomePage }) => {
           style={{
             width: widthFace,
             height: heightFace,
-            borderColor: "red",
-            borderWidth: 1,
             position: "absolute",
             display: faceDetected ? "flex" : "none",
             top: xPosition,
             left: yPosition,
-            borderRadius: 50,
+            borderRadius: 8,
+            backgroundColor: "black",
           }}
         ></View>
+        {photoUri && <Image source={{ uri: photoUri }} style={styles.photo} />}
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.button}
@@ -117,13 +137,22 @@ const CameraScreen = ({ setIsHomePage }) => {
               source={require("../assets/images/home_3_fill.png")}
             />
           </TouchableOpacity>
+          <TouchableOpacity
+          style={styles.button}
+          onPress={takePicture}
+          >
+            <Image
+              style={styles.takePictureLogo}
+              source={require("../assets/images/square_circle_line.png")}
+            />
+          </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
             <Image
               style={styles.cameraFlipLogo}
               source={require("../assets/images/camera_rotate_fill.png")}
             />
           </TouchableOpacity>
-          {type === CameraType.back && <TouchableOpacity style={styles.button} onPress={toggleFlash}>
+          {(type === CameraType.back && false) && <TouchableOpacity style={styles.button} onPress={toggleFlash}>
             <Image
               style={styles.cameraFlipLogo}
               source={require("../assets/images/flash_fill.png")}
@@ -162,6 +191,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
   },
+  takePictureLogo: {
+    width: 75,
+    height: 75,
+    resizeMode: "contain",
+  },
   cameraFlipLogo: {
     width: 30,
     height: 30,
@@ -176,6 +210,15 @@ const styles = StyleSheet.create({
     left: 0,
     marginTop: 20,
     marginLeft: 10,
+  },
+  photo: {
+    width: 100,
+    height: 200,
+    resizeMode: "contain",
+    position: "absolute",
+    bottom: 50,
+    right: 0,
+    margin: 10,
   },
 });
 
