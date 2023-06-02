@@ -17,6 +17,12 @@ const CameraScreen = ({ setIsHomePage }) => {
   const { width } = useWindowDimensions();
   const height = Math.round((width * 16) / 9);
 
+  const [xPosition, setXPosition] = useState("50%");
+  const [yPosition, setYPosition] = useState("50%");
+
+  const [heightFace, setHeightFace] = useState(100);
+  const [widthFace, setWidthFace] = useState(100);
+
   if (!permission) {
     // Camera permissions are still loading
     return <View />;
@@ -38,11 +44,24 @@ const CameraScreen = ({ setIsHomePage }) => {
     setType((current) =>
       current === CameraType.back ? CameraType.front : CameraType.back
     );
+
+    setXPosition("50%");
+    setYPosition("50%");
   }
 
   const handleFacesDetected = ({ faces }) => {
     if (faces.length > 0) {
       console.log("faces", faces);
+
+      const face = faces[0];
+      const { bounds } = face;
+      console.log("bounds", bounds);
+
+      setXPosition(bounds.origin.y);
+      setYPosition(bounds.origin.x);
+      setHeightFace(bounds.size.height);
+      setWidthFace(bounds.size.width);
+
     }
   };
 
@@ -65,6 +84,17 @@ const CameraScreen = ({ setIsHomePage }) => {
           flex: 1,
         }}
       >
+        <View
+          style={{
+            width: widthFace,
+            height: heightFace,
+            borderColor: "red",
+            borderWidth: 1,
+            position: "absolute",
+            top: xPosition,
+            left: yPosition,
+          }}
+        ></View>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.button}
