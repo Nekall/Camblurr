@@ -7,11 +7,15 @@ import {
   TouchableOpacity,
   View,
   Image,
+  useWindowDimensions,
 } from "react-native";
+import * as FaceDetector from "expo-face-detector";
 
 const CameraScreen = ({ setIsHomePage }) => {
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
+  const { width } = useWindowDimensions();
+  const height = Math.round((width * 16) / 9);
 
   if (!permission) {
     // Camera permissions are still loading
@@ -36,9 +40,31 @@ const CameraScreen = ({ setIsHomePage }) => {
     );
   }
 
+  const handleFacesDetected = ({ faces }) => {
+    if (faces.length > 0) {
+      console.log("faces", faces);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Camera style={styles.camera} type={type}>
+      <Camera
+        type={type}
+        onFacesDetected={handleFacesDetected}
+        faceDetectorSettings={{
+          mode: FaceDetector.FaceDetectorMode.fast,
+          detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
+          runClassifications: FaceDetector.FaceDetectorClassifications.all,
+          minDetectionInterval: 100,
+          tracking: true,
+        }}
+        ratio="16:9"
+        style={{
+          height: height,
+          width: "100%",
+          flex: 1,
+        }}
+      >
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.button}
@@ -69,9 +95,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-  },
-  camera: {
-    flex: 1,
   },
   buttonContainer: {
     flex: 1,
