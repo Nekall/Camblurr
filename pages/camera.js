@@ -1,4 +1,4 @@
-import { Camera, CameraType } from "expo-camera";
+import { Camera, CameraType, FlashMode } from "expo-camera";
 import { useState } from "react";
 import {
   Button,
@@ -16,12 +16,15 @@ const CameraScreen = ({ setIsHomePage }) => {
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const { width } = useWindowDimensions();
   const height = Math.round((width * 16) / 9);
+  const [flash, setFlash] = useState(FlashMode.off);
 
+
+  // Tracking face
   const [xPosition, setXPosition] = useState("50%");
   const [yPosition, setYPosition] = useState("50%");
-
   const [heightFace, setHeightFace] = useState(100);
   const [widthFace, setWidthFace] = useState(100);
+  const [faceDetected, setFaceDetected] = useState(false);
 
   if (!permission) {
     // Camera permissions are still loading
@@ -40,28 +43,34 @@ const CameraScreen = ({ setIsHomePage }) => {
     );
   }
 
-  function toggleCameraType() {
+  const toggleCameraType = () => {
     setType((current) =>
       current === CameraType.back ? CameraType.front : CameraType.back
     );
-
-    setXPosition("50%");
-    setYPosition("50%");
   }
+
+  const toggleFlash = () => {
+    setFlash((current) =>
+      current === FlashMode.off ? FlashMode.torch : FlashMode.off
+    );
+  };
 
   const handleFacesDetected = ({ faces }) => {
     if (faces.length > 0) {
       console.log("faces", faces);
 
+      /// First face
       const face = faces[0];
       const { bounds } = face;
-      console.log("bounds", bounds);
 
       setXPosition(bounds.origin.y);
       setYPosition(bounds.origin.x);
       setHeightFace(bounds.size.height);
-      setWidthFace(bounds.size.width);
+      setWidthFace(bounds.size.width);bounds.origin.x
+      setFaceDetected(true);
 
+    } else {
+      setFaceDetected(false);
     }
   };
 
@@ -69,6 +78,7 @@ const CameraScreen = ({ setIsHomePage }) => {
     <View style={styles.container}>
       <Camera
         type={type}
+        flashMode={flash}
         onFacesDetected={handleFacesDetected}
         faceDetectorSettings={{
           mode: FaceDetector.FaceDetectorMode.fast,
@@ -91,8 +101,10 @@ const CameraScreen = ({ setIsHomePage }) => {
             borderColor: "red",
             borderWidth: 1,
             position: "absolute",
+            display: faceDetected ? "flex" : "none",
             top: xPosition,
             left: yPosition,
+            borderRadius: 50,
           }}
         ></View>
         <View style={styles.buttonContainer}>
@@ -111,6 +123,12 @@ const CameraScreen = ({ setIsHomePage }) => {
               source={require("../assets/images/camera_rotate_fill.png")}
             />
           </TouchableOpacity>
+          {type === CameraType.back && <TouchableOpacity style={styles.button} onPress={toggleFlash}>
+            <Image
+              style={styles.cameraFlipLogo}
+              source={require("../assets/images/flash_fill.png")}
+            />
+          </TouchableOpacity>}
         </View>
         <Image
           style={styles.camblurrLogo}
@@ -130,14 +148,14 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     backgroundColor: "transparent",
-    margin: 64,
-    borderWidth: 1,
-    borderColor: "grey",
+    //margin: 64,
   },
   button: {
     flex: 1,
     alignSelf: "flex-end",
     alignItems: "center",
+    margin: 10,
+    //zIndex: 666,
   },
   text: {
     fontSize: 24,
@@ -154,9 +172,9 @@ const styles = StyleSheet.create({
     height: 75,
     resizeMode: "contain",
     position: "absolute",
-    bottom: 0,
-    right: 0,
-    marginRight: 10,
+    top: 0,
+    left: 0,
+    margin: 10,
   },
 });
 
