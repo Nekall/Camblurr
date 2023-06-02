@@ -174,7 +174,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     left: 0,
-    margin: 10,
+    marginTop: 20,
+    marginLeft: 10,
   },
 });
 

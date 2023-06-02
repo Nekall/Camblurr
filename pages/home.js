@@ -27,11 +27,11 @@ const HomeScreen = ({ setIsHomePage }) => {
             source={require("../assets/icons/Camblurr.png")}
           />
           <Text style={styles.baseline}>
-            Préservez l'anonymat tout en capturant des souvenirs uniques.
+            ‒ Préservez l'anonymat tout en capturant des souvenirs uniques.
           </Text>
         </View>
         <View style={styles.content}>
-          <Text style={styles.detail}>⚠️ In progress... ⚠️</Text>
+          <View style={styles.preview}></View>
           <View style={styles.buttonBox}>
             <TouchableOpacity
               onPress={() => setIsHomePage(false)}
@@ -41,6 +41,16 @@ const HomeScreen = ({ setIsHomePage }) => {
                 style={styles.camera}
                 source={require("../assets/images/camera_2_fill.png")}
               />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.reviewButtonBox}>
+            <TouchableOpacity
+              onPress={() =>
+                Alert.alert("Donner votre avis - En developpement")
+              }
+              style={styles.reviewButton}
+            >
+              <Text styles={styles.reviewText}>Donner votre avis</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -53,13 +63,22 @@ const HomeScreen = ({ setIsHomePage }) => {
               onPress={() => Linking.openURL("https://github.com/Nekall")}
             >
               <Image
-                style={styles.github}
-                source={require("../assets/icons/github.svg")}
+                style={styles.githubLogo}
+                source={require("../assets/icons/github.png")}
               />
+            </Text>
+            ―{" "}
+            <Text
+              style={{ color: "white" }}
+              onPress={() => Linking.openURL("https://neka.dev")}
+            >
               Neka
             </Text>
           </Text>
         </View>
+        <Text style={styles.bannerVersion}>
+          camblurr - version 0.0.1 - 06/2023
+        </Text>
       </ImageBackground>
     </SafeAreaView>
   );
@@ -80,7 +99,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   header: {
-    flex: 1,
+    flex: 1.5,
     // borderColor: "yellow",
     // borderWidth: 2,
   },
@@ -94,7 +113,8 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
     textAlign: "center",
-    backgroundColor: "#000000c0",
+    //backgroundColor: "#000000c0",
+    fontStyle: "italic",
     borderRadius: 8,
     padding: 10,
     margin: 10,
@@ -105,8 +125,7 @@ const styles = StyleSheet.create({
     // borderColor: "red",
     // borderWidth: 2,
   },
-  detail: {
-    //display: "none",
+  preview: {
     color: "white",
     fontSize: 22,
     fontWeight: "bold",
@@ -115,6 +134,27 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 10,
     borderRadius: 8,
+    flex: 2,
+  },
+  reviewButtonBox: {
+    flex: 0.5,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  reviewButton: {
+    backgroundColor: "#000000c0",
+    padding: 15,
+    borderRadius: 8,
+    //width: 55,
+    //height: 55,
+  },
+  reviewText: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "white",
+    textAlign: "center",
+    padding: 10,
   },
   buttonBox: {
     flex: 0.5,
@@ -143,13 +183,18 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
   },
-  github: {
+  githubLogo: {
     width: 20,
     height: 20,
-    marginRight: 5,
-    marginBottom: -5,
-    borderWidth: 2,
-    borderColor: "red",
+    resizeMode: "contain",
+  },
+  bannerVersion: {
+    color: "white",
+    fontSize: 14,
+    textAlign: "center",
+    backgroundColor: "#000000c0",
+    fontStyle: "italic",
+    padding: 5,
   },
 });
 
