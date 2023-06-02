@@ -8,8 +8,10 @@ import {
   View,
   Image,
   useWindowDimensions,
+  Platform,
 } from "react-native";
 import * as FaceDetector from "expo-face-detector";
+import * as MediaLibrary from "expo-media-library";
 
 const CameraScreen = ({ setIsHomePage }) => {
   const [type, setType] = useState(CameraType.back);
@@ -29,9 +31,7 @@ const CameraScreen = ({ setIsHomePage }) => {
   // Take picture & save
   const [photoUri, setPhotoUri] = useState("");
 
-
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-  
 
   if (!permission) {
     // Camera permissions are still loading
@@ -54,7 +54,7 @@ const CameraScreen = ({ setIsHomePage }) => {
     setType((current) =>
       current === CameraType.back ? CameraType.front : CameraType.back
     );
-  }
+  };
 
   const toggleFlash = () => {
     setFlash((current) =>
@@ -73,9 +73,9 @@ const CameraScreen = ({ setIsHomePage }) => {
       setXPosition(bounds.origin.y);
       setYPosition(bounds.origin.x);
       setHeightFace(bounds.size.height);
-      setWidthFace(bounds.size.width);bounds.origin.x
+      setWidthFace(bounds.size.width);
+      bounds.origin.x;
       setFaceDetected(true);
-
     } else {
       setFaceDetected(false);
     }
@@ -88,9 +88,30 @@ const CameraScreen = ({ setIsHomePage }) => {
   };
 
   const onPictureSaved = async (photo) => {
-    setPhotoUri(photo.uri);
-    await sleep(6000);
-    setPhotoUri("");
+    const hasPermission = await requestMediaLibraryPermission();
+
+    if (hasPermission) {
+      setPhotoUri(photo.uri);
+      MediaLibrary.saveToLibraryAsync(photo.uri);
+      await sleep(6000);
+      setPhotoUri("");
+    }
+  };
+
+  const requestMediaLibraryPermission = async () => {
+    if (Platform.OS === "android") {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      return status === "granted";
+    } else {
+      const { status } = await MediaLibrary.getPermissionsAsync();
+      if (status !== "granted") {
+        const { status: newStatus } =
+          await MediaLibrary.requestPermissionsAsync();
+        return newStatus === "granted";
+      } else {
+        return true;
+      }
+    }
   };
 
   return (
@@ -137,10 +158,7 @@ const CameraScreen = ({ setIsHomePage }) => {
               source={require("../assets/images/home_3_fill.png")}
             />
           </TouchableOpacity>
-          <TouchableOpacity
-          style={styles.button}
-          onPress={takePicture}
-          >
+          <TouchableOpacity style={styles.button} onPress={takePicture}>
             <Image
               style={styles.takePictureLogo}
               source={require("../assets/images/square_circle_line.png")}
@@ -152,12 +170,14 @@ const CameraScreen = ({ setIsHomePage }) => {
               source={require("../assets/images/camera_rotate_fill.png")}
             />
           </TouchableOpacity>
-          {(type === CameraType.back && false) && <TouchableOpacity style={styles.button} onPress={toggleFlash}>
-            <Image
-              style={styles.cameraFlipLogo}
-              source={require("../assets/images/flash_fill.png")}
-            />
-          </TouchableOpacity>}
+          {type === CameraType.back && false && (
+            <TouchableOpacity style={styles.button} onPress={toggleFlash}>
+              <Image
+                style={styles.cameraFlipLogo}
+                source={require("../assets/images/flash_fill.png")}
+              />
+            </TouchableOpacity>
+          )}
         </View>
         <Image
           style={styles.camblurrLogo}
