@@ -6,6 +6,8 @@
 
 ### Dans notre monde numérique en constante évolution, la protection de notre vie privée est plus importante que jamais. Avec l'essor de l'intelligence artificielle, il est devenu facile pour les technologies de détourner notre identité et de compromettre notre sécurité. C'est pourquoi Camblurr offre une solution simple et efficace pour préserver votre anonymat tout en capturant des souvenirs précieux.
 
+![image](https://raw.githubusercontent.com/Nekall/Camblurr/main/assets/images/camblurr-views.png)
+
 ## Fonctionnalités principales
       
 ▶ Floutage automatique des visages : Camblurr utilise une technologie de détection de visage avancée pour identifier les visages dans les photos et les flouter automatiquement.      

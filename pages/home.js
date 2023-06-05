@@ -1,17 +1,13 @@
-import { useState } from "react";
 import {
-  Button,
   ImageBackground,
   StyleSheet,
   Text,
   View,
   Linking,
   Image,
-  Alert,
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-import { useFonts } from "expo-font";
 
 const HomeScreen = ({ setIsHomePage, setIsReviewPage }) => {
   return (
@@ -27,11 +23,16 @@ const HomeScreen = ({ setIsHomePage, setIsReviewPage }) => {
             source={require("../assets/icons/Camblurr.png")}
           />
           <Text style={styles.baseline}>
-            ‒ Préservez l'anonymat tout en capturant des souvenirs uniques.
+            ‒ «Préservez l'anonymat tout en capturant des souvenirs uniques.»
           </Text>
         </View>
         <View style={styles.content}>
-          <View style={styles.preview}></View>
+          <View style={styles.preview}>
+            <Text style={styles.stepsTitle}>Comment ça marche ?</Text>
+            <Text style={styles.steps}>① ➞ Je prend une photo</Text>
+            <Text style={styles.steps}>② ➞ Les visages sont floutés</Text>
+            <Text style={styles.steps}>③ ➞ Je partage sur les réseaux sereinement</Text>
+          </View>
           <View style={styles.buttonBox}>
             <TouchableOpacity
               onPress={() => setIsHomePage(false)}
@@ -82,14 +83,9 @@ const HomeScreen = ({ setIsHomePage, setIsReviewPage }) => {
   );
 };
 
-// const [loaded] = useFonts({
-//   Raleway: require("./assets/fonts/Raleway/Raleway-Regular.ttf"),
-// });
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //backgroundColor: "black",
     flexDirection: "column",
   },
   image: {
@@ -98,8 +94,6 @@ const styles = StyleSheet.create({
   },
   header: {
     flex: 1.5,
-    // borderColor: "yellow",
-    // borderWidth: 2,
   },
   camblurr: {
     width: 120,
@@ -111,17 +105,13 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
     textAlign: "center",
-    //backgroundColor: "#000000c0",
     fontStyle: "italic",
-    borderRadius: 8,
     padding: 10,
     margin: 10,
   },
   content: {
     flex: 4,
     justifyContent: "center",
-    // borderColor: "red",
-    // borderWidth: 2,
   },
   preview: {
     color: "white",
@@ -134,6 +124,19 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     flex: 2,
   },
+  stepsTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "white",
+    textAlign: "center",
+    paddingVertical: 40,
+  },
+  steps: {
+    fontSize: 18,
+    color: "white",
+    textAlign: "center",
+    padding: 15,
+  },
   reviewButtonBox: {
     flex: 0.5,
     flexDirection: "row",
@@ -144,8 +147,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#000000c0",
     padding: 15,
     borderRadius: 8,
-    //width: 55,
-    //height: 55,
   },
   reviewText: {
     fontSize: 22,
@@ -174,8 +175,6 @@ const styles = StyleSheet.create({
   footer: {
     flex: 0.5,
     fontSize: 16,
-    // borderColor: "orange",
-    // borderWidth: 2,
   },
   stamp: {
     color: "white",
