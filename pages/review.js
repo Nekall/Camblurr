@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  Button,
   ImageBackground,
   StyleSheet,
   Text,
@@ -11,15 +10,56 @@ import {
   SafeAreaView,
   TouchableOpacity,
   TextInput,
-  Dimensions
 } from "react-native";
-const { width, height } = Dimensions.get('window');
 
 const ReviewScreen = ({ setIsReviewPage }) => {
   const [email, setInputValue] = useState("");
   const [comment, setComment] = useState("");
+  const [stars, setStars] = useState(0);
+  const [sendButtonDisabled, setSendButtonDisabled] = useState(true);
 
+  const rating = (stars) => "★★★★★☆☆☆☆☆".slice(5 - stars, 10 - stars).split("");
 
+  useEffect(() => {
+    if (stars > 0 && email.length > 0 && comment.length > 0) {
+      setSendButtonDisabled(false);
+    } else {
+      setSendButtonDisabled(true);
+    }
+  }, [stars, email, comment]);
+
+  const sendReview = () => {
+    Alert.alert("Cette feature n'est pas encore disponible.");
+    return false;
+    fetch("/api/review", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        comment,
+        stars,
+      }),
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        Alert.alert("Merci !", "Ton avis a bien été envoyé, merci beaucoup !", [
+          {
+            text: "OK",
+            onPress: () => {
+              setInputValue("");
+              setComment("");
+              setStars(0);
+              setIsReviewPage(false);
+            },
+          },
+        ]);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -56,18 +96,35 @@ const ReviewScreen = ({ setIsReviewPage }) => {
             multiline={true}
             numberOfLines={10}
           />
-          <TouchableOpacity
-            onPress={() => console.log("send")}
-            style={styles.sendButton}
-          >
-          <View style={styles.sendBox}>
-          <Text style={styles.sendText}>Envoyer</Text>
+          <View style={styles.starsBox}>
+            {rating(stars).map((star, i) => (
+              <Text
+                key={i}
+                style={styles.stars}
+                onPress={() => setStars(i + 1)}
+              >
+                {star}
+              </Text>
+            ))}
           </View>
+          <TouchableOpacity
+            onPress={() => sendReview()}
+            style={styles.sendButton}
+            disabled={sendButtonDisabled}
+          >
+            <View style={styles.sendBox}>
+              <Text style={styles.sendText}>Envoyer</Text>
+            </View>
           </TouchableOpacity>
         </View>
         <View style={styles.emailBox}>
-          <Text style={styles.emailText} >Vous preferez par email?</Text>
-          <Text style={styles.emailText} onPress={() => Linking.openURL("mailto:contact@neka.dev")}>contact@neka.dev</Text>
+          <Text style={styles.emailText}>Vous preferez par email?</Text>
+          <Text
+            style={styles.emailText}
+            onPress={() => Linking.openURL("mailto:contact@neka.dev")}
+          >
+            contact@neka.dev
+          </Text>
         </View>
         <View style={styles.footer}>
           <Text style={styles.stamp}>© Camblurr</Text>
@@ -155,6 +212,16 @@ const styles = StyleSheet.create({
   sendText: {
     fontSize: 20,
     fontWeight: "bold",
+    color: "white",
+    textAlign: "center",
+    padding: 10,
+  },
+  starsBox: {
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  stars: {
+    fontSize: 30,
     color: "white",
     textAlign: "center",
     padding: 10,
