@@ -11,13 +11,16 @@ import {
   SafeAreaView,
   TouchableOpacity,
   TextInput,
+  Dimensions
 } from "react-native";
-import { useFonts } from "expo-font";
+const { width, height } = Dimensions.get('window');
 
 const ReviewScreen = ({ setIsReviewPage }) => {
   const [email, setInputValue] = useState("");
   const [comment, setComment] = useState("");
-  
+
+
+
   return (
     <SafeAreaView style={styles.container}>
       <ImageBackground
@@ -25,15 +28,20 @@ const ReviewScreen = ({ setIsReviewPage }) => {
         resizeMode="cover"
         style={styles.image}
       >
+        <TouchableOpacity
+          onPress={() => setIsReviewPage(false)}
+          style={styles.backButton}
+        >
+          <Text style={styles.backText}>Retour</Text>
+        </TouchableOpacity>
         <View style={styles.header}>
           <Image
             style={styles.camblurr}
             source={require("../assets/icons/Camblurr.png")}
           />
         </View>
-
         <View style={styles.content}>
-          <Text>Laisse ton avis !</Text>
+          <Text style={styles.title}>Laisse ton avis !</Text>
           <TextInput
             value={email}
             onChangeText={(email) => setInputValue(email)}
@@ -44,23 +52,23 @@ const ReviewScreen = ({ setIsReviewPage }) => {
             value={comment}
             onChangeText={(comment) => setComment(comment)}
             placeholder={"Ton commentaire ici..."}
-            style={styles.input}
+            style={styles.textArea}
+            multiline={true}
+            numberOfLines={10}
           />
           <TouchableOpacity
-              onPress={() => console.log("send")}
-              style={styles.backButton}
-            >
-              <Text styles={styles.backText}>Envoyer</Text>
-        </TouchableOpacity>
+            onPress={() => console.log("send")}
+            style={styles.sendButton}
+          >
+          <View style={styles.sendBox}>
+          <Text style={styles.sendText}>Envoyer</Text>
+          </View>
+          </TouchableOpacity>
         </View>
-
-
-        <TouchableOpacity
-              onPress={() => setIsReviewPage(false)}
-              style={styles.backButton}
-            >
-              <Text styles={styles.backText}>Retour</Text>
-        </TouchableOpacity>
+        <View style={styles.emailBox}>
+          <Text style={styles.emailText} >Vous preferez par email?</Text>
+          <Text style={styles.emailText} onPress={() => Linking.openURL("mailto:contact@neka.dev")}>contact@neka.dev</Text>
+        </View>
         <View style={styles.footer}>
           <Text style={styles.stamp}>© Camblurr</Text>
           <Text style={styles.stamp}>
@@ -91,14 +99,9 @@ const ReviewScreen = ({ setIsReviewPage }) => {
   );
 };
 
-// const [loaded] = useFonts({
-//   Raleway: require("./assets/fonts/Raleway/Raleway-Regular.ttf"),
-// });
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //backgroundColor: "black",
     flexDirection: "column",
   },
   image: {
@@ -106,9 +109,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   header: {
-    flex: 1.5,
-    // borderColor: "yellow",
-    // borderWidth: 2,
+    flex: 0.8,
   },
   camblurr: {
     width: 120,
@@ -119,28 +120,74 @@ const styles = StyleSheet.create({
   content: {
     flex: 4,
     justifyContent: "center",
-    // borderColor: "red",
-    // borderWidth: 2,
   },
-  backButton: {
-    backgroundColor: "#000000c0",
-    padding: 15,
-    borderRadius: 8,
-    //width: 55,
-    //height: 55,
-  },
-  backText: {
-    fontSize: 22,
+  title: {
+    fontSize: 24,
     fontWeight: "bold",
     color: "white",
     textAlign: "center",
     padding: 10,
   },
+  input: {
+    height: 40,
+    margin: 10,
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: "#000000c0",
+  },
+  textArea: {
+    height: 150,
+    margin: 10,
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: "#000000c0",
+    textAlignVertical: "top",
+  },
+  sendBox: {},
+  sendButton: {
+    backgroundColor: "#000000c0",
+    padding: 2,
+    borderRadius: 8,
+    margin: 10,
+  },
+  sendText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "white",
+    textAlign: "center",
+    padding: 10,
+  },
+  backButton: {
+    backgroundColor: "#000000c0",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginTop: 20,
+    borderRadius: 8,
+    position: "absolute",
+    top: 20,
+    right: 20,
+    zIndex: 666,
+  },
+  backText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "white",
+    textAlign: "center",
+  },
+  emailBox: {
+    flex: 0.8,
+    justifyContent: "center",
+  },
+  emailText: {
+    fontSize: 16,
+    color: "white",
+    textAlign: "center",
+  },
   footer: {
     flex: 0.5,
     fontSize: 16,
-    // borderColor: "orange",
-    // borderWidth: 2,
   },
   stamp: {
     color: "white",
