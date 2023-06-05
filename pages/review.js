@@ -10,10 +10,14 @@ import {
   Alert,
   SafeAreaView,
   TouchableOpacity,
+  TextInput,
 } from "react-native";
 import { useFonts } from "expo-font";
 
-const HomeScreen = ({ setIsHomePage, setIsReviewPage }) => {
+const ReviewScreen = ({ setIsReviewPage }) => {
+  const [email, setInputValue] = useState("");
+  const [comment, setComment] = useState("");
+  
   return (
     <SafeAreaView style={styles.container}>
       <ImageBackground
@@ -26,32 +30,37 @@ const HomeScreen = ({ setIsHomePage, setIsReviewPage }) => {
             style={styles.camblurr}
             source={require("../assets/icons/Camblurr.png")}
           />
-          <Text style={styles.baseline}>
-            ‒ Préservez l'anonymat tout en capturant des souvenirs uniques.
-          </Text>
         </View>
+
         <View style={styles.content}>
-          <View style={styles.preview}></View>
-          <View style={styles.buttonBox}>
-            <TouchableOpacity
-              onPress={() => setIsHomePage(false)}
-              style={styles.customButton}
+          <Text>Laisse ton avis !</Text>
+          <TextInput
+            value={email}
+            onChangeText={(email) => setInputValue(email)}
+            placeholder={"Email"}
+            style={styles.input}
+          />
+          <TextInput
+            value={comment}
+            onChangeText={(comment) => setComment(comment)}
+            placeholder={"Ton commentaire ici..."}
+            style={styles.input}
+          />
+          <TouchableOpacity
+              onPress={() => console.log("send")}
+              style={styles.backButton}
             >
-              <Image
-                style={styles.camera}
-                source={require("../assets/images/camera_2_fill.png")}
-              />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.reviewButtonBox}>
-            <TouchableOpacity
-              onPress={() => setIsReviewPage(true)}
-              style={styles.reviewButton}
-            >
-              <Text styles={styles.reviewText}>Donner votre avis</Text>
-            </TouchableOpacity>
-          </View>
+              <Text styles={styles.backText}>Envoyer</Text>
+        </TouchableOpacity>
         </View>
+
+
+        <TouchableOpacity
+              onPress={() => setIsReviewPage(false)}
+              style={styles.backButton}
+            >
+              <Text styles={styles.backText}>Retour</Text>
+        </TouchableOpacity>
         <View style={styles.footer}>
           <Text style={styles.stamp}>© Camblurr</Text>
           <Text style={styles.stamp}>
@@ -107,69 +116,25 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     margin: 10,
   },
-  baseline: {
-    color: "white",
-    fontSize: 18,
-    textAlign: "center",
-    //backgroundColor: "#000000c0",
-    fontStyle: "italic",
-    borderRadius: 8,
-    padding: 10,
-    margin: 10,
-  },
   content: {
     flex: 4,
     justifyContent: "center",
     // borderColor: "red",
     // borderWidth: 2,
   },
-  preview: {
-    color: "white",
-    fontSize: 22,
-    fontWeight: "bold",
-    textAlign: "center",
-    backgroundColor: "#000000c0",
-    padding: 10,
-    margin: 10,
-    borderRadius: 8,
-    flex: 2,
-  },
-  reviewButtonBox: {
-    flex: 0.5,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  reviewButton: {
+  backButton: {
     backgroundColor: "#000000c0",
     padding: 15,
     borderRadius: 8,
     //width: 55,
     //height: 55,
   },
-  reviewText: {
+  backText: {
     fontSize: 22,
     fontWeight: "bold",
     color: "white",
     textAlign: "center",
     padding: 10,
-  },
-  buttonBox: {
-    flex: 0.5,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  customButton: {
-    backgroundColor: "#000000c0",
-    padding: 5,
-    borderRadius: 8,
-    width: 55,
-    height: 55,
-  },
-  camera: {
-    width: 45,
-    height: 45,
   },
   footer: {
     flex: 0.5,
@@ -196,4 +161,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default ReviewScreen;
