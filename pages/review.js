@@ -29,9 +29,9 @@ const ReviewScreen = ({ setIsReviewPage }) => {
   }, [stars, email, comment]);
 
   const sendReview = () => {
-    Alert.alert("Cette feature n'est pas encore disponible.");
-    return false;
-    fetch("/api/review", {
+    //Alert.alert("Cette feature n'est pas encore disponible.");
+    //return false;
+    fetch("https://eovdhjsfgufy5wo.m.pipedream.net", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -44,17 +44,11 @@ const ReviewScreen = ({ setIsReviewPage }) => {
     })
       .then((response) => response.json())
       .then((json) => {
-        Alert.alert("Merci !", "Ton avis a bien été envoyé, merci beaucoup !", [
-          {
-            text: "OK",
-            onPress: () => {
-              setInputValue("");
-              setComment("");
-              setStars(0);
-              setIsReviewPage(false);
-            },
-          },
-        ]);
+        Alert.alert("Merci pour ton avis !");
+        setInputValue("");
+        setComment("");
+        setStars(0);
+        setIsReviewPage(false);
       })
       .catch((error) => {
         console.error(error);
