@@ -20,7 +20,9 @@ const CameraScreen = ({ setIsHomePage }) => {
   const height = Math.round((width * 16) / 9);
   const [flash, setFlash] = useState(FlashMode.off);
   const cameraRef = useRef(null);
-  const [faces, setFaces] = useState(null);
+
+  // Tracking faces
+  const [detectedFaces, setDetectedFaces] = useState([]);
 
   // Take picture & save
   const [photoUri, setPhotoUri] = useState("");
@@ -56,6 +58,10 @@ const CameraScreen = ({ setIsHomePage }) => {
     );
   };
 
+  const handleFacesDetected = ({ faces }) => {
+    setDetectedFaces(faces);
+  };
+
   const takePicture = () => {
     if (cameraRef.current) {
       cameraRef.current.takePictureAsync({ onPictureSaved: onPictureSaved });
@@ -89,20 +95,12 @@ const CameraScreen = ({ setIsHomePage }) => {
     }
   };
 
-  const setupFaces = (facesDetected) => {
-    if (facesDetected) {
-      setFaces(facesDetected);
-    } else {
-      setFaces(null);
-    }
-  };
-
   return (
     <View style={styles.container}>
       <Camera
         type={type}
         flashMode={flash}
-        onFacesDetected={(facesDetected) => setupFaces(facesDetected.faces)}
+        onFacesDetected={handleFacesDetected}
         ref={cameraRef}
         faceDetectorSettings={{
           mode: FaceDetector.FaceDetectorMode.fast,
@@ -117,27 +115,29 @@ const CameraScreen = ({ setIsHomePage }) => {
           width: "100%",
           flex: 1,
         }}
+        onCameraReady={() => console.log("Camera is ready")}
+        onMountError={(error) => console.log("Camera mount error:", error)}
+        onError={(error) => console.log("Camera error:", error)}
+        onBarCodeScanned={(data) => console.log("Barcode scanned:", data)}
       >
-        {faces &&
-          faces.map((face, index) => {
-            const { bounds } = face;
-            return (
-              <View
-                key={`face-${index}`}
-                style={{
-                  width: bounds.size.width,
-                  height: bounds.size.height,
-                  position: "absolute",
-                  top: bounds.origin.y,
-                  left: bounds.origin.x,
-                  borderRadius: 50,
-                  backgroundColor: "black",
-                }}
-              ></View>
-            );
-          })}
-
+        {/* {detectedFaces.map((face, index) => (
+          <View
+            key={index}
+            style={{
+              width: face.bounds.size.width,
+              height: face.bounds.size.height,
+              position: "absolute",
+              top: face.bounds.origin.y,
+              left: face.bounds.origin.x,
+              borderRadius: 8,
+              backgroundColor: "black",
+            }}
+          ></View>
+        ))} */}
         {photoUri && <Image source={{ uri: photoUri }} style={styles.photo} />}
+        <Text style={styles.devMsg}>
+          Le floutage est actuellement désactivé.
+        </Text>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.button}
@@ -182,6 +182,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
+  },
+  devMsg: {
+    position: "absolute",
+    bottom: "15%",
+    left: "10%",
+    fontSize: 18,
+    color: "red",
   },
   buttonContainer: {
     flex: 1,
