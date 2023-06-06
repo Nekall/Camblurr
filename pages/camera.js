@@ -1,5 +1,5 @@
 import { Camera, CameraType, FlashMode } from "expo-camera";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import {
   Button,
   StyleSheet,
@@ -20,13 +20,7 @@ const CameraScreen = ({ setIsHomePage }) => {
   const height = Math.round((width * 16) / 9);
   const [flash, setFlash] = useState(FlashMode.off);
   const cameraRef = useRef(null);
-
-  // Tracking face
-  const [xPosition, setXPosition] = useState("50%");
-  const [yPosition, setYPosition] = useState("50%");
-  const [heightFace, setHeightFace] = useState(100);
-  const [widthFace, setWidthFace] = useState(100);
-  const [faceDetected, setFaceDetected] = useState(false);
+  const [faces, setFaces] = useState(null);
 
   // Take picture & save
   const [photoUri, setPhotoUri] = useState("");
@@ -43,7 +37,7 @@ const CameraScreen = ({ setIsHomePage }) => {
     return (
       <View style={styles.container}>
         <Text style={{ textAlign: "center" }}>
-          We need your permission to show the camera
+          Nous avons besoin de votre autorisation pour utiliser la caméra
         </Text>
         <Button onPress={requestPermission} title="grant permission" />
       </View>
@@ -60,25 +54,6 @@ const CameraScreen = ({ setIsHomePage }) => {
     setFlash((current) =>
       current === FlashMode.off ? FlashMode.torch : FlashMode.off
     );
-  };
-
-  const handleFacesDetected = ({ faces }) => {
-    if (faces.length > 0) {
-      //console.log("faces", faces);
-
-      /// First face
-      const face = faces[0];
-      const { bounds } = face;
-
-      setXPosition(bounds.origin.y);
-      setYPosition(bounds.origin.x);
-      setHeightFace(bounds.size.height);
-      setWidthFace(bounds.size.width);
-      bounds.origin.x;
-      setFaceDetected(true);
-    } else {
-      setFaceDetected(false);
-    }
   };
 
   const takePicture = () => {
@@ -114,19 +89,27 @@ const CameraScreen = ({ setIsHomePage }) => {
     }
   };
 
+  const setupFaces = (facesDetected) => {
+    if (facesDetected) {
+      setFaces(facesDetected);
+    } else {
+      setFaces(null);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Camera
         type={type}
         flashMode={flash}
-        onFacesDetected={handleFacesDetected}
+        onFacesDetected={(facesDetected) => setupFaces(facesDetected.faces)}
         ref={cameraRef}
         faceDetectorSettings={{
           mode: FaceDetector.FaceDetectorMode.fast,
-          detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
-          runClassifications: FaceDetector.FaceDetectorClassifications.all,
-          minDetectionInterval: 100,
-          tracking: true,
+          detectLandmarks: FaceDetector.FaceDetectorLandmarks.off,
+          runClassifications: FaceDetector.FaceDetectorClassifications.off,
+          //minDetectionInterval: 1000,
+          tracking: false,
         }}
         ratio="16:9"
         style={{
@@ -135,18 +118,25 @@ const CameraScreen = ({ setIsHomePage }) => {
           flex: 1,
         }}
       >
-        <View
-          style={{
-            width: widthFace,
-            height: heightFace,
-            position: "absolute",
-            display: faceDetected ? "flex" : "none",
-            top: xPosition,
-            left: yPosition,
-            borderRadius: 8,
-            backgroundColor: "black",
-          }}
-        ></View>
+        {faces &&
+          faces.map((face, index) => {
+            const { bounds } = face;
+            return (
+              <View
+                key={`face-${index}`}
+                style={{
+                  width: bounds.size.width,
+                  height: bounds.size.height,
+                  position: "absolute",
+                  top: bounds.origin.y,
+                  left: bounds.origin.x,
+                  borderRadius: 50,
+                  backgroundColor: "black",
+                }}
+              ></View>
+            );
+          })}
+
         {photoUri && <Image source={{ uri: photoUri }} style={styles.photo} />}
         <View style={styles.buttonContainer}>
           <TouchableOpacity
