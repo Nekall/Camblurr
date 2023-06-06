@@ -1,3 +1,7 @@
+![image](https://raw.githubusercontent.com/Nekall/Camblurr/main/assets/images/camblurr-intro.png)
+[![image](https://raw.githubusercontent.com/Nekall/Camblurr/main/assets/images/camblurr-btn.png)](https://expo.dev/@lilneka/camblurr)
+![image](https://raw.githubusercontent.com/Nekall/Camblurr/main/assets/images/camblurr-views.png)
+___
 <img src="https://raw.githubusercontent.com/Nekall/Camblurr/main/assets/icons/Camblurr.png" width="250" height="auto">
       
 ## ― Préservez l'anonymat tout en capturant des souvenirs uniques.
@@ -5,8 +9,6 @@
 ### Camblurr est une application mobile qui permet de prendre des photos en floutant automatiquement les visages des personnes. Elle est développée en utilisant React Native et Expo.
 
 ### Dans notre monde numérique en constante évolution, la protection de notre vie privée est plus importante que jamais. Avec l'essor de l'intelligence artificielle, il est devenu facile pour les technologies de détourner notre identité et de compromettre notre sécurité. C'est pourquoi Camblurr offre une solution simple et efficace pour préserver votre anonymat tout en capturant des souvenirs précieux.
-
-![image](https://raw.githubusercontent.com/Nekall/Camblurr/main/assets/images/camblurr-views.png)
 
 ## Fonctionnalités principales
       
